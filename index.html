@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>남들이 말 안 해주는 나의 문제점 테스트</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#fff6fb; --bg2:#fff0f6;
+  --accent:#ff3e85; --accent2:#ff8fb7;
+  --muted:#7a607a;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:'Gowun Dodum',sans-serif;
+  background: linear-gradient(180deg,var(--bg1),var(--bg2));
+  display:flex;align-items:center;justify-content:center;padding:28px;
+  color:#3b213b;
+}
+
+/* loader */
+#loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(180deg,#ffdfe8aa,#fff);z-index:999}
+#loader i{font-size:56px;color:var(--accent);animation:pop 1s infinite}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* container */
+.wrap{width:100%;max-width:720px;background:linear-gradient(180deg,rgba(255,255,255,0.95),#fff);border-radius:20px;padding:22px;box-shadow:0 14px 40px rgba(255,110,170,0.08);position:relative;overflow:hidden}
+
+/* floating shapes */
+.shape{position:absolute;width:36px;height:36px;border-radius:8px;background:var(--accent);opacity:.08;bottom:-40px;transform:rotate(12deg);animation:rise 8s linear infinite}
+.shape.s2{left:25%;animation-duration:7s;opacity:.11}
+.shape.s3{left:60%;animation-duration:9s;opacity:.09}
+.shape.s4{left:82%;animation-duration:6.5s;opacity:.12}
+@keyframes rise{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(-900px) rotate(180deg);opacity:0}}
+
+/* header */
+.header{display:flex;gap:14px;align-items:center}
+.logo{width:64px;height:64px;border-radius:14px;background:linear-gradient(180deg,#fff,#ffeef8);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--accent);box-shadow:0 8px 24px rgba(255,111,181,0.06)}
+.title{font-size:24px;color:var(--accent);margin:0}
+.lead{margin:6px 0 14px;color:var(--muted);font-size:14px}
+
+/* card */
+.card{background:#fff;border-radius:14px;padding:16px;margin-top:12px;box-shadow:0 8px 20px rgba(219,155,200,0.03);border:1px solid rgba(255,200,230,0.4)}
+
+/* question */
+.q-top{display:flex;justify-content:space-between;align-items:center}
+.q-num{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;padding:6px 10px;border-radius:999px;font-weight:800}
+.q-text{margin:12px 0 8px;font-size:18px;font-weight:800;color:#9b3a66}
+
+/* options */
+.options{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fffaf7);cursor:pointer;border:1px solid rgba(255,150,200,0.12);transition:transform .12s,box-shadow .12s}
+.opt:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(255,111,181,0.06)}
+.opt .ico{width:46px;height:46;border-radius:10px;background:linear-gradient(180deg,#fff1f8,#ffdff0);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--accent)}
+
+/* footer */
+.footer{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px}
+.progress{flex:1;height:10px;background:#fff0f6;border-radius:999px;overflow:hidden;border:1px solid rgba(255,200,230,0.6)}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .28s}
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;padding:10px 14px;border-radius:12px;border:0;font-weight:800;cursor:pointer}
+
+/* result */
+.result-wrap{text-align:center;padding:10px}
+.res-emoji{font-size:64px;margin-top:6px}
+.res-title{font-size:20px;font-weight:900;color:var(--accent);margin:8px 0}
+.res-desc{color:var(--muted);line-height:1.6;margin:8px 12px}
+.actions{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.small{font-size:13px;color:#a07ea6;margin-top:8px}
+
+/* canvas hide */
+#resultCanvas{display:none}
+
+/* responsive */
+@media (max-width:480px){
+  .title{font-size:20px}
+  .q-text{font-size:16px}
+  .logo{width:50px;height:50px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <i class="ri-heart-pulse-fill"></i>
+  <div style="height:10px"></div>
+  <div style="color:#8b6a8b">잠깐만요... 테스트 로딩중</div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <div class="shape"></div><div class="shape s2"></div><div class="shape s3"></div><div class="shape s4"></div>
+
+  <div class="header">
+    <div class="logo">💬</div>
+    <div>
+      <h1 class="title">남들이 말 안 해주는 나의 문제점 테스트</h1>
+      <div class="lead">주변이 말하지 않는 당신의 약점을 10문항으로 분석합니다. (솔직히 아프지만 필요한 진단)</div>
+    </div>
+  </div>
+
+  <div class="card" id="introCard">
+    <h3 style="margin:0">테스트 안내</h3>
+    <p class="small" style="margin-top:8px;color:var(--muted)">10문항 · A/B/C/D 선택 · 가장 많이 선택된 유형으로 문제점 진단. 결과는 복사·공유·이미지 저장 가능.</p>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <button id="startBtn" class="btn">테스트 시작</button>
+      <button id="howBtn" class="btn" style="background:transparent;color:var(--accent);border:1px dashed rgba(255,111,181,0.12)">방식 보기</button>
+    </div>
+  </div>
+
+  <div class="card" id="quizCard" style="display:none">
+    <div class="q-top">
+      <div class="q-num" id="qNum">Q1</div>
+      <div style="color:var(--muted);font-weight:800" id="qProgress">1 / 10</div>
+    </div>
+
+    <div class="q-text" id="qText">질문</div>
+    <div class="options" id="options"></div>
+
+    <div class="footer">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div style="min-width:120px;text-align:right">
+        <button id="skipBtn" class="btn" style="background:transparent;color:var(--accent);border:1px solid rgba(255,111,181,0.12)">건너뛰기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none">
+    <div class="result-wrap">
+      <div class="res-emoji" id="resEmoji">💥</div>
+      <div class="res-title" id="resTitle">결과 타이틀</div>
+      <div class="res-desc" id="resDesc"></div>
+
+      <div class="actions">
+        <button id="copyBtn" class="btn" style="background:linear-gradient(90deg,#ffbcd7,#ff8fb7)">결과 복사</button>
+        <button id="tweetBtn" class="btn" style="background:linear-gradient(90deg,#8bbdff,#6fb8ff)">X에 공유</button>
+        <button id="downloadBtn" class="btn" style="background:linear-gradient(90deg,#ffd38a,#ffb86b)">이미지 저장</button>
+      </div>
+
+      <div class="small">솔직한 진단이 불편할 수 있습니다. 결과는 자기성찰 용도로만 활용하세요.</div>
+
+      <div style="text-align:center;margin-top:12px">
+        <button id="retryBtn" class="btn" style="background:linear-gradient(90deg,#ff7aa1,#ff4d8a);padding:12px 20px">다시 하기</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<canvas id="resultCanvas" width="800" height="1000"></canvas>
+
+<script>
+/* 질문 데이터 (10문항) */
+const questions = [
+{q:"1. 누가 당신을 비판하면 먼저 드는 생각은?", opts:[
+  {t:"A", txt:"내가 뭘 잘못했나 반성"},
+  {t:"B", txt:"왜 저 사람이 감히... 화남"},
+  {t:"C", txt:"상대 의도 무엇인지 계산"},
+  {t:"D", txt:"신경 끄고 관심 끊음"},
+]},
+{q:"2. 친구가 내 계획을 바꾸면?", opts:[
+  {t:"A", txt:"내 기분 상하지만 숨김"},
+  {t:"B", txt:"바로 불만 표출"},
+  {t:"C", txt:"왜 그랬는지 계속 추적"},
+  {t:"D", txt:"다음부터 연락 잘 안 함"},
+]},
+{q:"3. 반복되는 실수 지적을 들으면?", opts:[
+  {t:"A", txt:"내가 문제인가 싶어 우울"},
+  {t:"B", txt:"억울해서 크게 감정 표출"},
+  {t:"C", txt:"반박·논리로 상대 제압"},
+  {t:"D", txt:"거리 두고 관심서 약해짐"},
+]},
+{q:"4. 누군가 나를 이용한다고 느끼면?", opts:[
+  {t:"A", txt:"계속 참다가 상처 받음"},
+  {t:"B", txt:"감정적으로 폭발함"},
+  {t:"C", txt:"되갚을 방법 생각함"},
+  {t:"D", txt:"그냥 떠나버림"},
+]},
+{q:"5. 약속을 지키지 않는 사람을 보면?", opts:[
+  {t:"A", txt:"내가 맞춰주려 애씀"},
+  {t:"B", txt:"직접적으로 불평함"},
+  {t:"C", txt:"계속 테스트해봄"},
+  {t:"D", txt:"그 사람과 대화 줄임"},
+]},
+{q:"6. 칭찬을 들으면 당신은?", opts:[
+  {t:"A", txt:"기쁘지만 겸손해짐"},
+  {t:"B", txt:"받아주고 더 보여주려 함"},
+  {t:"C", txt:"왜 칭찬했는지 읽음"},
+  {t:"D", txt:"별 관심 없음, 금방 식음"},
+]},
+{q:"7. 누군가의 말이 상처되면?", opts:[
+  {t:"A", txt:"속으로 자책한다"},
+  {t:"B", txt:"바로 맞받아친다"},
+  {t:"C", txt:"계획적으로 거리를 둔다"},
+  {t:"D", txt:"연락을 끊어버린다"},
+]},
+{q:"8. 중요한 결정 앞에서 당신은?", opts:[
+  {t:"A", txt:"다른 사람 눈치 보며 망설임"},
+  {t:"B", txt:"감정적 충동으로 결정함"},
+  {t:"C", txt:"데이터·계산으로 접근"},
+  {t:"D", txt:"관심 없으면 결정 회피"},
+]},
+{q:"9. 연애에서 반복되는 문제는?", opts:[
+  {t:"A", txt:"항상 내가 더 참음"},
+  {t:"B", txt:"사소한 일로 크게 싸움"},
+  {t:"C", txt:"계속 전략적으로 관계 운영"},
+  {t:"D", txt:"빠르게 권태 느낌"},
+]},
+{q:"10. 주변 사람들이 당신에게 가장 많이 하는 말은?", opts:[
+  {t:"A", txt:"너는 너무 착해 보인다"},
+  {t:"B", txt:"너는 너무 티가 나서 문제야"},
+  {t:"C", txt:"너는 계산적이야"},
+  {t:"D", txt:"너는 쉽게 식는다"},
+]}
+];
+
+/* 결과 유형 */
+const results = {
+ A:{ emoji:"🕊️", title:"과잉수용형 문제점", desc:"타인의 기준이나 기대에 과도하게 맞추려다 자신을 잃는 경향이 있습니다. 착하고 배려 깊은 면이 있지만, 너무 참는 태도는 장기적으로 소진을 불러옵니다. 대화로 경계 설정을 연습하세요." },
+ B:{ emoji:"🔥", title:"감정 표출형 문제점", desc:"감정이 곧 행동으로 이어져 주변에 오해를 낳을 수 있습니다. 순간의 분노나 서운함을 다스리지 못하면 관계가 반복적으로 깨질 수 있어요. 한 걸음 물러서서 생각하는 연습을 해보세요." },
+ C:{ emoji:"🧭", title:"전략·계산형 문제점", desc:"관계에서 계산과 전략이 지나쳐 상대가 피곤함을 느낍니다. 통제하려는 태도는 단기적 이득을 주지만 신뢰를 훼손합니다. 솔직함과 약속을 먼저 지키는 행동을 늘려보세요." },
+ D:{ emoji:"❄️", title:"냉담·회피형 문제점", desc:"문제에 직면하기보다 회피하는 경향이 있어 관계가 깊어지기 어렵습니다. 감정 연결을 일부러라도 만드는 작은 루틴이 도움이 됩니다." }
+};
+
+/* 상태, 요소 */
+let state = { index:0, scores:{A:0,B:0,C:0,D:0} };
+
+const loader = document.getElementById('loader');
+const app = document.getElementById('app');
+const startBtn = document.getElementById('startBtn');
+const howBtn = document.getElementById('howBtn');
+const introCard = document.getElementById('introCard');
+const quizCard = document.getElementById('quizCard');
+const resultCard = document.getElementById('resultCard');
+const qNum = document.getElementById('qNum');
+const qText = document.getElementById('qText');
+const optionsWrap = document.getElementById('options');
+const qProgress = document.getElementById('qProgress');
+const bar = document.getElementById('bar');
+
+const resEmoji = document.getElementById('resEmoji');
+const resTitle = document.getElementById('resTitle');
+const resDesc = document.getElementById('resDesc');
+const copyBtn = document.getElementById('copyBtn');
+const tweetBtn = document.getElementById('tweetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const retryBtn = document.getElementById('retryBtn');
+const skipBtn = document.getElementById('skipBtn');
+
+setTimeout(()=>{ loader.style.display='none'; app.style.display='block'; },800);
+
+/* render question */
+function renderQuestion(){
+  const i = state.index;
+  const q = questions[i];
+  qNum.textContent = `Q${i+1}`;
+  qText.textContent = q.q;
+  qProgress.textContent = `${i+1} / ${questions.length}`;
+  bar.style.width = `${Math.round((i)/questions.length*100)}%`;
+  optionsWrap.innerHTML = '';
+  q.opts.forEach((o, idx) => {
+    const d = document.createElement('div');
+    d.className='opt'; d.tabIndex=0;
+    d.innerHTML = `<div class="ico">${String.fromCharCode(65+idx)}</div><div style="flex:1">${o.txt}</div>`;
+    d.addEventListener('click', ()=> selectOption(o.t));
+    d.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') selectOption(o.t) });
+    optionsWrap.appendChild(d);
+  });
+}
+
+/* select */
+function selectOption(type){
+  if(state.scores[type] !== undefined) state.scores[type]++;
+  nextStep();
+}
+
+function nextStep(){
+  if(state.index < questions.length - 1){
+    state.index++; renderQuestion();
+  } else showResult();
+}
+
+startBtn.addEventListener('click', ()=>{
+  introCard.style.display='none'; quizCard.style.display='block';
+  state.index=0; state.scores={A:0,B:0,C:0,D:0}; bar.style.width='0%'; renderQuestion();
+});
+
+howBtn.addEventListener('click', ()=> alert('10문항으로 가장 많이 선택된 유형을 결과로 보여드립니다. 결과는 복사·공유·이미지 저장 가능합니다.'));
+
+skipBtn.addEventListener('click', ()=> nextStep());
+
+/* show result */
+function showResult(){
+  quizCard.style.display='none';
+  const entries = Object.entries(state.scores).sort((a,b)=>b[1]-a[1]);
+  const topScore = entries[0][1];
+  const tied = entries.filter(e=> e[1]===topScore).map(e=>e[0]);
+  const prio = ['A','B','C','D']; // tie-break priority
+  let pick = tied[0]; for(const p of prio) if(tied.includes(p)){ pick=p; break; }
+
+  const r = results[pick];
+  resEmoji.textContent = r.emoji;
+  resTitle.textContent = r.title;
+  resDesc.textContent = r.desc;
+
+  resultCard.style.display='block';
+}
+
+/* retry */
+retryBtn.addEventListener('click', ()=>{
+  resultCard.style.display='none';
+  introCard.style.display='block';
+});
+
+/* copy */
+copyBtn.addEventListener('click', ()=>{
+  const text = `${resEmoji.textContent} ${resTitle.textContent}\n\n${resDesc.textContent}`;
+  navigator.clipboard.writeText(text).then(()=> alert("복사되었습니다!"));
+});
+
+/* tweet */
+tweetBtn.addEventListener('click', ()=>{
+  const t = encodeURIComponent(`${resTitle.textContent}\n${resDesc.textContent}`);
+  window.open(`https://twitter.com/intent/tweet?text=${t}`);
+});
+
+/* download image */
+downloadBtn.addEventListener('click', ()=>{
+  const canvas = document.getElementById('resultCanvas');
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,800,1000);
+
+  ctx.fillStyle="#ff3e85";
+  ctx.font="bold 48px Gowun Dodum";
+  ctx.textAlign="center";
+  ctx.fillText("나의 문제점 테스트",400,120);
+
+  ctx.font="80px Gowun Dodum";
+  ctx.fillText(resEmoji.textContent,400,240);
+
+  ctx.fillStyle="#000";
+  ctx.font="bold 40px Gowun Dodum";
+  ctx.fillText(resTitle.textContent,400,330);
+
+  ctx.font="26px Gowun Dodum";
+  wrapText(ctx,resDesc.textContent,80,420,640,38);
+
+  const link = document.createElement('a');
+  link.download="result.png";
+  link.href=canvas.toDataURL();
+  link.click();
+});
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(" ");
+  let line="";
+  for(let n=0;n<words.length;n++){
+    const test = line + words[n] + " ";
+    const width = ctx.measureText(test).width;
+    if(width > maxWidth){
+      ctx.fillText(line,x+maxWidth/2,y);
+      line = words[n] + " ";
+      y += lineHeight;
+    } else line = test;
+  }
+  ctx.fillText(line,x+maxWidth/2,y);
+}
+</script>
+
+</body>
+</html>
