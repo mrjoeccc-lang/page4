@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>썸에서 내가 맡는 역할 테스트</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+<!-- Icon CDN -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        background: #ffe6ef;
+        font-family: 'Gowun Dodum', sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+    }
+    .loader {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #ffd4e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 9999;
+    }
+    .loader i {
+        font-size: 60px;
+        color: #ff3e85;
+        animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1);} 
+        50% { transform: scale(1.2);} 
+        100% { transform: scale(1);} 
+    }
+
+    .container {
+        width: 90%;
+        max-width: 420px;
+        background: #ffffff;
+        padding: 28px;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(255, 138, 170, 0.3);
+        text-align: center;
+        display: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bg-heart {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #ff8fb7;
+        opacity: 0.4;
+        bottom: -20px;
+        border-radius: 50%;
+        animation: floatUp 6s infinite;
+    }
+
+    @keyframes floatUp {
+        0% { transform: translateY(0) scale(1);}
+        100% { transform: translateY(-600px) scale(0.2); opacity: 0;}
+    }
+
+    h1 {
+        font-size: 26px;
+        color: #ff3e85;
+        margin-bottom: 10px;
+    }
+
+    .visitor-count {
+        margin-top: 6px;
+        color: #ff6ba3;
+        font-size: 14px;
+    }
+
+    .question {
+        margin-top: 25px;
+        color: #ff6ba3;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .option {
+        background: #ffe3ee;
+        padding: 14px;
+        margin-top: 14px;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 17px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .option:hover {
+        background: #ffbcd7;
+        transform: scale(1.02);
+    }
+
+    .result {
+        display: none;
+        text-align: center;
+        margin-top: 25px;
+    }
+
+    .result-icon {
+        font-size: 50px;
+        color: #ff3e85;
+        margin-bottom: 10px;
+    }
+
+    .character-img {
+        width: 180px;
+        margin: 10px auto;
+        display: block;
+    }
+
+    .restart {
+        margin-top: 20px;
+        padding: 12px 20px;
+        background: #ff3e85;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 17px;
+    }
+
+    .share-box {
+        margin-top: 15px;
+    }
+    .share-btn {
+        margin: 5px;
+        background: #ff8fb7;
+        padding: 10px 15px;
+        border-radius: 10px;
+        color: white;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .ad-section {
+        margin-top: 18px;
+        text-align: center;
+    }
+
+    .ad-note {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #777;
+    }
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+    <i class="ri-heart-pulse-fill"></i>
+    <p>로딩중...</p>
+</div>
+
+<div class="container" id="mainBox">
+
+    <div class="bg-heart" style="left:10%; animation-delay:0s;"></div>
+    <div class="bg-heart" style="left:50%; animation-delay:1s;"></div>
+    <div class="bg-heart" style="left:80%; animation-delay:2s;"></div>
+
+    <h1><i class="ri-empathize-fill"></i> 썸에서 내가 맡는 역할 테스트</h1>
+    <p style="color:#ff8eb4;">썸 단계에서 나는 어떤 포지션일까?</p>
+
+    <div class="visitor-count" id="visitorCount">총 방문자: 로딩중...</div>
+
+    <div id="quiz"></div>
+
+    <div class="result" id="result">
+        <i class="result-icon ri-sparkling-fill"></i>
+        <img id="charImg" class="character-img" src="" alt="캐릭터 이미지" />
+        <h2 id="resultTitle"></h2>
+        <p id="resultDesc"></p>
+
+        <div class="share-box">
+            <div class="share-btn" onclick="copyLink()">링크 복사</div>
+        </div>
+
+        <button class="restart" onclick="location.reload()">다시 테스트</button>
+    </div>
+
+    <div class="ad-section" id="adSection" aria-hidden="false">
+        <iframe class="coupang-iframe" src="https://coupa.ng/ckRC81" width="120" height="240" frameborder="0" scrolling="no"></iframe>
+        <div class="ad-note">이 포스팅은 쿠팡 파트너스 활동의 일환으로 일정액의 수수료를 받을 수 있습니다.</div>
+    </div>
+
+</div>
+
+<script>
+/* 로더 */
+setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("mainBox").style.display = "block";
+}, 800);
+
+/* 방문자 수 */
+(function(){
+    try {
+        let v = localStorage.getItem("love_fail_visit");
+        if(!v) v = 0;
+        v = parseInt(v) + 1;
+        localStorage.setItem("love_fail_visit", v);
+        document.getElementById("visitorCount").innerText = `총 방문자: ${v}명`;
+    } catch(e) {
+        document.getElementById("visitorCount").innerText = "총 방문자: -";
+    }
+})();
+
+/* 문제 — 썸 역할 버전 */
+const questions = [
+    {
+        q:"1. 썸 상대가 먼저 연락이 뜸해진다면, 당신은?",
+        options:[
+            {text:"오히려 더 챙기고 먼저 다가간다", type:"A"},
+            {text:"상황 파악하며 천천히 거리 조절한다", type:"B"}
+        ]
+    },
+    {
+        q:"2. 상대가 애매한 행동을 보일 때 당신은?",
+        options:[
+            {text:"혼자 설레고 의미부여하며 몰입한다", type:"C"},
+            {text:"애매하면 바로 선 긋고 감정 정리한다", type:"D"}
+        ]
+    },
+    {
+        q:"3. 썸 단계에서 주로 어떤 행동을 보이나?",
+        options:[
+            {text:"상대 기분 맞추고 배려하는 역할", type:"A"},
+            {text:"상대가 먼저 표현할 때까지 기다리는 역할", type:"B"}
+        ]
+    },
+    {
+        q:"4. 결정적인 순간, 당신은?",
+        options:[
+            {text:"내가 먼저 확신을 줘서 분위기를 끌고 간다", type:"C"},
+            {text:"리스크를 피하려고 한발 물러서게 된다", type:"D"}
+        ]
+    },
+    {
+        q:"5. 상대가 다가오면 당신은?",
+        options:[
+            {text:"더 잘해주고 감정적으로 몰입함", type:"C"},
+            {text:"감정 들키기 싫어 적당히 거리 둠", type:"D"}
+        ]
+    }
+];
+
+/* 결과 — 썸 역할 4종류 */
+const results = {
+    A:{
+        title:"💗 돌봄·케어형",
+        desc:"상대가 마음 편하게 머물 수 있게 해주는 스타일. 배려도 많고 따뜻해서 썸 단계에서 누구나 편안함을 느낌. 하지만 너무 맞춰주다 보면 상대가 당신의 가치를 가볍게 보거나 당연하게 여기는 경우도 생김.",
+        img:"https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f970.png"
+    },
+    B:{
+        title:"🧩 관망·분석형",
+        desc:"상대 행동을 조용히 분석하고 타이밍을 보는 타입. 무리하지 않고 전략적으로 썸을 이어감. 안정적이지만, 너무 신중해서 흐름을 놓치거나 ‘관심 없는 줄 알았다’는 오해를 종종 받음.",
+        img:"https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f9e0.png"
+    },
+    C:{
+        title:"🔥 몰입·드라이브형",
+        desc:"설레면 바로 몰입하고 적극적으로 흐름을 만들어가는 타입. 상대 입장에서는 강렬하고 매력적이며 빠르게 가까워짐. 다만 속도가 빨라서 상대가 부담을 느끼거나 ‘기대치가 너무 높다’고 느낄 수도 있음.",
+        img:"https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u1f525.png"
+    },
+    D:{
+        title:"❄️ 회피·거리두기형",
+        desc:"좋아해도 감정 들키기 싫고, 상처받는 게 두려워 자연스럽게 거리를 두는 타입. 상대는 ‘밀당하나?’라고 생각하지만 사실은 마음이 조심스러운 것. 주도권을 잡을 수 있지만 흐름이 끊기기도 쉬움.",
+        img:"https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/128/emoji_u2744.png"
+    }
+};
+
+let score={A:0,B:0,C:0,D:0};
+let qIndex=0;
+
+function renderQuiz(){
+    if(qIndex>=questions.length) return showResult();
+
+    const q = questions[qIndex];
+    let html = `<div class='question'><i class='ri-heart-line'></i> ${q.q}</div>`;
+
+    q.options.forEach(opt=>{
+        html += `<div class='option' onclick="selectOption('${opt.type}')">${opt.text}</div>`;
+    });
+
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function selectOption(type){
+    if(score[type]!==undefined) score[type]++;
+    qIndex++;
+    renderQuiz();
+}
+
+function showResult(){
+    document.getElementById("quiz").style.display = "none";
+
+    let topType = Object.keys(score).reduce((a,b)=> score[a]>=score[b]?a:b);
+
+    document.getElementById("resultTitle").innerText = results[topType].title;
+    document.getElementById("resultDesc").innerText = results[topType].desc;
+    document.getElementById("charImg").src = results[topType].img;
+
+    document.getElementById("result").style.display = "block";
+}
+
+function copyLink(){
+    navigator.clipboard.writeText(location.href)
+        .then(()=> alert("링크 복사 완료!"))
+        .catch(()=> alert("복사 실패"));
+}
+
+renderQuiz();
+</script>
+
+</body>
+</html>
