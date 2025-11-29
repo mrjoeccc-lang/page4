@@ -1,0 +1,168 @@
+<!-- Full HTML with pink love style including emojis -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>썸에서 내가 맡는 역할 테스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+ body {
+   margin: 0;
+   font-family: 'Pretendard', sans-serif;
+   background: linear-gradient(180deg, #ffe6f2, #ffd8eb);
+   color: #ff2e74;
+ }
+ .container {
+   max-width: 500px;
+   margin: 0 auto;
+   padding: 20px;
+   text-align: center;
+ }
+ h1 {
+   font-size: 26px;
+   margin-top: 40px;
+   font-weight: 700;
+ }
+ .question-box {
+   background: #fff;
+   padding: 20px;
+   border-radius: 16px;
+   margin-top: 20px;
+   box-shadow: 0 0 20px rgba(255, 100, 150, 0.25);
+ }
+ button {
+   width: 100%;
+   padding: 14px;
+   margin-top: 12px;
+   border: none;
+   border-radius: 12px;
+   background: #ff6fa8;
+   color: white;
+   font-size: 16px;
+   font-weight: 600;
+   cursor: pointer;
+   transition: 0.2s;
+ }
+ button:hover {
+   background: #ff2e74;
+ }
+ .result-box {
+   display: none;
+   background: #fff;
+   padding: 24px;
+   border-radius: 16px;
+   margin-top: 20px;
+   box-shadow: 0 0 20px rgba(255, 100, 150, 0.25);
+ }
+ .emoji {
+   font-size: 48px;
+   margin-bottom: 16px;
+ }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>💕 썸에서 내가 맡는 역할 테스트 💕</h1>
+
+  <div id="quiz" class="question-box">
+    <div id="qText">1. 썸이 시작되면 가장 먼저 드는 생각은?</div>
+    <button onclick="answer('A')">💘 빨리 확실하게 만들고 싶다!</button>
+    <button onclick="answer('B')">😊 천천히 서로 알아가는 게 좋다</button>
+    <button onclick="answer('C')">😏 밀당하면서 긴장감을 유지해야지</button>
+    <button onclick="answer('D')">😎 될지 안 될지 보고 결정하자</button>
+  </div>
+
+  <div id="result" class="result-box">
+    <div id="emoji" class="emoji">😄</div>
+    <h2 id="rTitle"></h2>
+    <p id="rDesc"></p>
+    <button onclick="location.reload()">↩ 다시 테스트하기</button>
+  </div>
+</div>
+
+<script>
+let qIndex = 0;
+let score = { A:0, B:0, C:0, D:0 };
+
+const questions = [
+  "1. 썸이 시작되면 가장 먼저 드는 생각은?",
+  "2. 상대가 답장이 느리면 나는?",
+  "3. 첫 데이트 후, 나는 보통?",
+  "4. 상대가 과하게 다가오면 나는?",
+  "5. 나에게 썸이란?"
+];
+
+const options = [
+  ["💘 확실하게 잡아야지", "😊 천천히 즐기자", "😏 밀당 시작", "😎 일단 상황 보기"],
+  ["😥 불안해서 나도 빨리 보냄", "🙂 괜찮아 기다리지", "😏 밀당 기회다", "😐 관심이 없나 생각"],
+  ["💖 바로 연락함", "☺ 여유롭게 다음 약속 생각", "😎 상대 반응 먼저 확인", "🤔 진짜 괜찮은지 분석"],
+  ["😳 당황하지만 좋음", "🙂 조심스럽게 조절", "😏 나도 플러팅", "😑 거리 둠"],
+  ["💓 사랑의 시작", "🌿 설레는 과정", "🔥 게임과 전략", "🧊 관찰 단계"]
+];
+
+const results = {
+  A: {
+    emoji: "💘",
+    title: "직진 텐션 리더형",
+    desc: "당신은 썸에서 먼저 분위기를 주도하고 상대의 마음을 빠르게 확인하고 싶어하는 직진 스타일! 혼란 없이 명확한 관계를 선호해요."
+  },
+  B: {
+    emoji: "🌸",
+    title: "감성 조율 힐러형",
+    desc: "당신은 썸에서 균형과 안정감을 주는 사람! 상대가 편안함을 느끼며 자연스럽게 끌리는 타입이에요."
+  },
+  C: {
+    emoji: "😏",
+    title: "플러팅 밀당 전략가형",
+    desc: "당신은 썸의 긴장감을 유지하며 상대를 더 끌리게 만드는 능력을 가진 사람! 흥미와 재미가 핵심요소예요."
+  },
+  D: {
+    emoji: "🧊",
+    title: "관찰형 현실주의자",
+    desc: "당신은 감정보다 현실적 판단을 먼저 하는 타입! 썸에서 쉽게 휘둘리지 않고 천천히 상황을 보는 사람입니다."
+  }
+};
+
+function answer(type) {
+  score[type]++;
+  qIndex++;
+
+  if (qIndex < questions.length) {
+    document.getElementById("qText").innerText = questions[qIndex];
+    const btns = document.querySelectorAll("#quiz button");
+    btns.forEach((b, i) => b.innerText = options[qIndex][i]);
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById("quiz").style.display = "none";
+
+  const top = Object.keys(score).reduce((a, b) => score[a] > score[b] ? a : b);
+
+  document.getElementById("emoji").innerText = results[top].emoji;
+  document.getElementById("rTitle").innerText = results[top].title;
+  document.getElementById("rDesc").innerText = results[top].desc;
+
+  document.getElementById("result").style.display = "block";
+}
+</script>
+<script>
+// Simple visitor counter using localStorage + GitHub Pages workaround (no server)
+let visitCount = localStorage.getItem('sum_role_test_visits');
+if (!visitCount) visitCount = 0;
+visitCount++;
+localStorage.setItem('sum_role_test_visits', visitCount);
+
+// Display counter
+const counterBox = document.createElement('div');
+counterBox.style.marginTop = '20px';
+counterBox.style.fontSize = '14px';
+counterBox.style.color = '#ff2e74';
+counterBox.innerHTML = `👀 지금까지 이 기기에서 <b>${visitCount}</b>번 테스트를 실행했어요`;
+document.querySelector('.container').appendChild(counterBox);
+</script>
+</body>
+</html>
